@@ -1,0 +1,47 @@
+<template>
+  <div role="tablist" aria-label="Data Source Tabs">
+    <button
+      v-for="{ value, label } in tabs"
+      :key="value"
+      :class="{
+        'font-size-body tab': true,
+        'tab--selected': value === selected,
+      }"
+      role="tab"
+      :aria-selected="value === selected"
+      @click="$emit('select', value)"
+    >
+      {{ label }}
+    </button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { defineProps } from 'vue'
+type Tab = {
+  label: string
+  value: string
+}
+defineProps<{ tabs: Tab[]; selected: string }>()
+
+defineEmits<{
+  (e: 'select', value: string | number): void
+}>()
+</script>
+
+<style scoped lang="scss">
+.tab {
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: transparent;
+  height: 80px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  &--selected {
+    background-color: #4a8fcd80;
+  }
+}
+</style>

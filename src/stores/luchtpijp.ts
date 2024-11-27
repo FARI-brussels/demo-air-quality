@@ -13,13 +13,19 @@ const DATA_PATHS = {
 
 export const useLuchtpijpStore = defineStore('luchtpijp', () => {
   const globalStore = useGlobalStore()
-  const dataType = ref<string | null>('P2')
+  const dataType = ref<string | null>('P1')
   const markerLocations = ref(null)
 
   async function fetchLuchtpijpData(path: LuchtpijpSource) {
     globalStore.loading = true
+    console.log({ path })
     const data = await DATA_PATHS[path]()
-    if (data) markerLocations.value = data
+    console.log({ data })
+    if (data)
+      markerLocations.value = data.map((item, index) => ({
+        ...item,
+        id: index,
+      }))
     globalStore.loading = false
   }
 
@@ -61,7 +67,7 @@ async function fetchSensorCommunityData() {
       const lon = parseFloat(s.location.longitude)
       const P1 = parseFloat(
         s.sensordatavalues.find(
-          ({ value_type }: { value_type: string }) => value_type === 'P1',
+          ({ value_type }: { value_type: string }) => value_type === 'P2',
         )?.value || '0',
       )
 
@@ -79,27 +85,28 @@ async function fetchSensorCommunityData() {
 async function fetchIrcelineData() {
   const pm25Url =
     'https://geo.irceline.be/sos/api/v1/timeseries/?service=1&phenomenon=6001&expanded=true&force_latest_values=true&status_intervals=true&rendering_hints=true&locale=en'
-  const pm10Url =
-    'https://geo.irceline.be/sos/api/v1/timeseries/?service=1&phenomenon=5&expanded=true&force_latest_values=true&status_intervals=true&rendering_hints=true&locale=en'
+  // const pm10Url =
+  //   'https://geo.irceline.be/sos/api/v1/timeseries/?service=1&phenomenon=5&expanded=true&force_latest_values=true&status_intervals=true&rendering_hints=true&locale=en'
 
   try {
-    const [pm25Response, pm10Response] = await Promise.all([
+    const [pm25Response] = await Promise.all([
       fetch(pm25Url),
-      fetch(pm10Url),
+      // fetch(pm10Url),
     ])
-    const [pm25Data, pm10Data] = await Promise.all([
+    const [pm25Data] = await Promise.all([
       pm25Response.json(),
-      pm10Response.json(),
+      // pm10Response.json(),
     ])
 
-    const markers = [...pm25Data, ...pm10Data]
+    const markers = [...pm25Data]
       .map(sensor => {
         const lat = parseFloat(sensor.station?.geometry?.coordinates[1])
         const lon = parseFloat(sensor.station?.geometry?.coordinates[0])
         const value = sensor.lastValue?.value
-        const type = sensor.parameters?.phenomenon?.label.includes('10')
-          ? 'P1'
-          : 'P2'
+        const type = 'P2'
+        // const type = sensor.parameters?.phenomenon?.label.includes('10')
+        //   ? 'P1'
+        //   : 'P2'
 
         if (lat > 50.8 && lat < 50.9 && lon > 4.25 && lon < 4.45) {
           return {

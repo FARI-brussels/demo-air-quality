@@ -10,11 +10,9 @@ import { getColor } from '../utils/colorMap'
 import type { ColorThreshold } from '@/types/Color'
 import type { Marker } from '@/types/Map'
 
-import star from '@/assets/star.svg'
-
 const mapContainer = ref<HTMLDivElement | null>(null)
 const map = ref<L.Map | null>(null)
-const markers = ref<L.CircleMarker[]>([])
+const markers = ref<L.LayerGroup | null>(null)
 
 const props = defineProps<{
   markerLocations?: Marker[] | null
@@ -49,12 +47,13 @@ onMounted(() => {
 watch(
   () => props.markerLocations,
   newLocations => {
-    if (map.value && newLocations)
+    if (map.value && newLocations) {
       renderMarkersOnMap({
         newMarkers: newLocations,
         type: props.type,
         colors: props.colors,
       })
+    }
   },
   { deep: true, immediate: true },
 )
@@ -62,12 +61,13 @@ watch(
 watch(
   () => props.colors,
   newColors => {
-    if (map.value && props.markerLocations)
+    if (map.value && props.markerLocations) {
       renderMarkersOnMap({
         newMarkers: props.markerLocations,
         type: props.type,
         colors: newColors,
       })
+    }
   },
   { deep: true, immediate: true },
 )
@@ -107,24 +107,19 @@ function updateMarkers({
   colors: ColorThreshold[]
   type: string
 }) {
-  const newType = props.type
-  console.log(newType)
   return newMarkers
     .filter(marker => !isNaN(marker.value))
     .map(marker => {
       const { value } = marker
       const color = getColor(value, colors)
-      console.log(newType)
-      const popupContent = `
-          <div> <strong>Location:</strong> ${[marker.lat, marker.lon]}<br> </div>
-            <div> <strong>Type:</strong> ${newType}<br></div>
-            <div> <strong>Value:</strong> ${value}</div>
-        `
       return {
         lat: marker.lat,
         lon: marker.lon,
         color,
-        popupContent,
+        popupContent: `
+          <strong>Sensor Location:</strong> ${[marker.lat, marker.lon]}<br>
+          <strong>${type} Value:</strong> ${value}
+        `,
       }
     })
 }
@@ -138,78 +133,34 @@ function renderMarkersOnMap({
   type: string
   colors: ColorThreshold[]
 }) {
+  if (markers.value) {
+    // Remove all existing markers from the map
+    markers.value.clearLayers()
+  } else {
+    // Initialize the marker layer group
+    markers.value = L.layerGroup().addTo(map.value!)
+  }
+
   const markersConfig = updateMarkers({
     newMarkers,
     colors,
     type,
   })
 
-  markersConfig.forEach((config, index) => {
-    const isStarLocation = config.lat === 50.845813 && config.lon === 4.3579312
+  // Add new markers to the layer group
+  markersConfig.forEach(config => {
+    const marker = L.circleMarker([config.lat, config.lon], {
+      radius: 6,
+      fillColor: config.color,
+      color: config.color,
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8,
+      className: 'custom-marker',
+    }).bindPopup(config.popupContent)
 
-    const icon = L.divIcon({
-      className: 'custom-star-icon',
-      html: `<img src="${star}" alt="star" style="width: 24px; height: 24px;" />`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
-    })
-
-    const starMarker = L.marker([config.lat, config.lon], { icon })
-
-    if (isStarLocation)
-      starMarker.addTo(map.value!).bindPopup(config.popupContent)
-
-    const existingMarker = markers.value[index]
-
-    if (existingMarker) {
-      const currentLatLng = existingMarker.getLatLng()
-      const currentColor = existingMarker.options.fillColor
-
-      const hasPositionChanged =
-        currentLatLng.lat !== config.lat || currentLatLng.lng !== config.lon
-
-      const hasColorChanged = currentColor !== config.color
-
-      if (hasPositionChanged || hasColorChanged) {
-        if (hasPositionChanged) {
-          existingMarker.setLatLng([config.lat, config.lon])
-        }
-
-        if (hasColorChanged) {
-          existingMarker.setStyle({
-            fillColor: config.color,
-            color: config.color,
-          })
-        }
-      }
-    } else {
-      const marker = L.circleMarker([config.lat, config.lon], {
-        radius: 0,
-        fillColor: config.color,
-        color: config.color,
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8,
-        className: 'custom-marker',
-      })
-
-      marker.addTo(map.value!).bindPopup(config.popupContent)
-
-      setTimeout(() => {
-        marker.setRadius(6)
-      }, 50)
-      markers.value.push(marker)
-    }
+    markers.value!.addLayer(marker)
   })
-
-  if (markers.value.length > markersConfig.length) {
-    const markersToRemove = markers.value.slice(markersConfig.length)
-
-    markersToRemove.forEach(marker => {
-      map.value?.removeLayer(marker)
-    })
-    markers.value = markers.value.slice(0, markersConfig.length)
-  }
 }
 </script>
 
@@ -225,33 +176,5 @@ function renderMarkersOnMap({
 }
 :deep(.custom-marker) {
   transition: all 0.3s ease-in-out;
-}
-
-:deep(.leaflet-popup-content-wrapper) {
-  background-color: #2f519c;
-  font-size: 1rem;
-  width: fit-content;
-  color: white;
-  padding: 0.3rem;
-}
-
-:deep(.leaflet-popup-content) {
-  background-color: #2f519c;
-  font-size: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  color: white;
-  padding: 0.3rem;
-}
-:deep(.leaflet-popup-tip) {
-  background-color: #2f519c;
-  color: white;
-}
-
-:deep(a.leaflet-popup-close-button) {
-  color: white;
-  border-bottom-color: white;
 }
 </style>

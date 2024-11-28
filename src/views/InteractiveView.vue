@@ -92,7 +92,7 @@
       <BrusselsMap
         :markerLocations="markerLocations"
         :colors="selectedThresholds"
-        type="PM2.5"
+        :type="globalStore?.source === 'luchtpijp' ? 'PM2.5' : 'NO2'"
       />
     </transition>
   </div>

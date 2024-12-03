@@ -114,6 +114,8 @@ import {
   thresholdsNoNorm,
   thresholdsEuropeanCurrent,
   thresholdsEuropeanFuture,
+  thresholdsEuropeanCurrentLuchtpijp,
+  thresholdsEuropeanFutureLuchtpijp,
 } from '../utils/colorMap'
 
 import type { Norms } from '@/types/Source'
@@ -154,8 +156,14 @@ const norm = ref<Norms>(null)
 
 const thresholdsMap = computed(() => ({
   global: thresholdsWorldHealth,
-  current: thresholdsEuropeanCurrent,
-  future: thresholdsEuropeanFuture,
+  current:
+    globalStore.source === 'luchtpijp'
+      ? thresholdsEuropeanCurrentLuchtpijp
+      : thresholdsEuropeanCurrent,
+  future:
+    globalStore.source === 'luchtpijp'
+      ? thresholdsEuropeanFutureLuchtpijp
+      : thresholdsEuropeanFuture,
   null: globalStore.source === 'luchtpijp' ? thresholdsP2 : thresholdsNoNorm,
 }))
 

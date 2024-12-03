@@ -28,6 +28,16 @@ export const thresholdsEuropeanFuture: ColorThreshold[] = [
   { threshold: 10, color: '#FF0000' },
 ] as const
 
+export const thresholdsEuropeanCurrentLuchtpijp: ColorThreshold[] = [
+  { threshold: 0, color: '#00FF00' },
+  { threshold: 40, color: '#FF0000' },
+] as const
+
+export const thresholdsEuropeanFutureLuchtpijp: ColorThreshold[] = [
+  { threshold: 0, color: '#00FF00' },
+  { threshold: 20, color: '#FF0000' },
+] as const
+
 export const thresholdsP2: ColorThreshold[] = [
   { threshold: 0, color: '#0000FF' },
   { threshold: 3.5, color: '#0099FF' },

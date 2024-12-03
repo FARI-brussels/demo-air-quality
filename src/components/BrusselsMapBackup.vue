@@ -134,10 +134,8 @@ function renderMarkersOnMap({
   colors: ColorThreshold[]
 }) {
   if (markers.value) {
-    // Remove all existing markers from the map
     markers.value.clearLayers()
   } else {
-    // Initialize the marker layer group
     markers.value = L.layerGroup().addTo(map.value!)
   }
 
@@ -147,19 +145,44 @@ function renderMarkersOnMap({
     type,
   })
 
-  // Add new markers to the layer group
   markersConfig.forEach(config => {
-    const marker = L.circleMarker([config.lat, config.lon], {
-      radius: 6,
-      fillColor: config.color,
-      color: config.color,
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8,
-      className: 'custom-marker',
-    }).bindPopup(config.popupContent)
+    const isStarLocation = config.lat === 50.845813 && config.lon === 4.3579312
 
-    markers.value!.addLayer(marker)
+    if (isStarLocation) {
+      console.log(isStarLocation)
+      const svgHtml = `
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="${config.color || '#183E91'}"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+      </svg>
+                        `
+      const icon = L.divIcon({
+        className: 'custom-star-icon',
+        html: svgHtml,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      })
+
+      const starMarker = L.marker([config.lat, config.lon], { icon })
+      starMarker.bindPopup(config.popupContent)
+      markers.value!.addLayer(starMarker)
+    } else {
+      const marker = L.circleMarker([config.lat, config.lon], {
+        radius: 6,
+        fillColor: config.color,
+        color: config.color,
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8,
+        className: 'custom-marker',
+      }).bindPopup(config.popupContent)
+      markers.value!.addLayer(marker)
+    }
   })
 }
 </script>

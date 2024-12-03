@@ -108,13 +108,14 @@ function updateMarkers({
   type: string
 }) {
   const newType = props.type
-  console.log(newType)
   return newMarkers
     .filter(marker => !isNaN(marker.value))
     .map(marker => {
       const { value } = marker
       const color = getColor(value, colors)
-      console.log(newType)
+
+      console.log({ value, newType, lat: marker.lat, lon: marker.lon })
+
       const popupContent = `
           <div> <strong>Location:</strong> ${[marker.lat, marker.lon]}<br> </div>
             <div> <strong>Type:</strong> ${newType}<br></div>
@@ -161,7 +162,7 @@ function renderMarkersOnMap({
 
     const existingMarker = markers.value[index]
 
-    if (existingMarker) {
+    if (existingMarker && !isStarLocation) {
       const currentLatLng = existingMarker.getLatLng()
       const currentColor = existingMarker.options.fillColor
 

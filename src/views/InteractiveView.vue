@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import BrusselsMap from '@/components/BrusselsMap.vue'
+import BrusselsMap from '@/components/BrusselsMapBackup.vue'
 import { FDemoAppBar } from 'fari-component-library'
 import AppBarTabs from '@/components/AppBarTabs.vue'
 import RadioContainer from '@/components/RadioContainer.vue'

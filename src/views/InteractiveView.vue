@@ -92,7 +92,7 @@
       <BrusselsMap
         :markerLocations="markerLocations"
         :colors="selectedThresholds"
-        type="P2"
+        :type="globalStore?.source === 'luchtpijp' ? 'PM2.5' : 'NO2'"
       />
     </transition>
   </div>
@@ -111,6 +111,7 @@ import { useCurieusenairStore } from '@/stores/curieusenair'
 import {
   thresholdsP2,
   thresholdsWorldHealth,
+  thresholdsNoNorm,
   thresholdsEuropeanCurrent,
   thresholdsEuropeanFuture,
 } from '../utils/colorMap'
@@ -139,16 +140,28 @@ onMounted(
     ]),
 )
 
-const thresholdsMap = {
+const norms = computed(() => [
+  {
+    label: 'No norm',
+    value: null as Norms,
+  },
+  { label: 'European Current', value: 'current' as Norms },
+  { label: 'European Future', value: 'future' as Norms },
+  { label: 'World Health', value: 'global' as Norms },
+])
+
+const norm = ref<Norms>(null)
+
+const thresholdsMap = computed(() => ({
   global: thresholdsWorldHealth,
   current: thresholdsEuropeanCurrent,
   future: thresholdsEuropeanFuture,
-  null: thresholdsP2,
-}
+  null: globalStore.source === 'luchtpijp' ? thresholdsP2 : thresholdsNoNorm,
+}))
 
 const selectedThresholds = computed(() => {
   const normValue = norm.value ?? 'null'
-  return thresholdsMap[normValue] ?? thresholdsP2
+  return thresholdsMap.value[normValue] ?? thresholdsP2
 })
 
 const colorChart = computed(() => {
@@ -166,13 +179,6 @@ const colorChart = computed(() => {
   })
 })
 
-const norms = [
-  { label: 'No norm', value: null as Norms },
-  { label: 'European Current', value: 'current' as Norms },
-  { label: 'European Future', value: 'future' as Norms },
-  { label: 'World Health', value: 'global' as Norms },
-]
-
 const textContent = {
   expair: `The expair data have been collected during the full year 2023 by
             Bral. There are compared here with the Irceline data collected in
@@ -185,8 +191,6 @@ const textContent = {
   curieusenair: `some curiusenair text`,
   luchtpijp: `some luchtpijp text`,
 }
-
-const norm = ref<Norms>(null)
 </script>
 
 <style scoped lang="scss">

@@ -10,6 +10,11 @@
         :selected="globalStore.source"
         @select="globalStore.toggleSource"
       />
+      <FLanguageSelector
+        :locale="locale"
+        class="language-select"
+        @update:locale="setLocale"
+      />
     </FDemoAppBar>
 
     <div class="sources bg-color-blue rounded p-sm">
@@ -51,7 +56,7 @@
             }"
           >
             <span>
-              {{ textContent[globalStore.source] }}
+              {{ infoCards?.[globalStore.source]?.[locale] }}
             </span>
           </div>
         </div>
@@ -100,14 +105,16 @@
 
 <script setup lang="ts">
 import BrusselsMap from '@/components/BrusselsMapBackup.vue'
-import { FDemoAppBar } from 'fari-component-library'
+import { FDemoAppBar, FLanguageSelector } from 'fari-component-library'
 import AppBarTabs from '@/components/AppBarTabs.vue'
 import RadioContainer from '@/components/RadioContainer.vue'
 import { useLuchtpijpStore } from '@/stores/luchtpijp'
 import { useExpairStore } from '@/stores/expair'
 import { useGlobalStore } from '@/stores/global'
-import { onMounted, computed, ref } from 'vue'
 import { useCurieusenairStore } from '@/stores/curieusenair'
+import { useDataStore } from '@/stores/cms'
+import { onMounted, computed, ref } from 'vue'
+
 import {
   thresholdsP2,
   thresholdsWorldHealth,
@@ -117,6 +124,7 @@ import {
   thresholdsEuropeanCurrentLuchtpijp,
   thresholdsEuropeanFutureLuchtpijp,
 } from '../utils/colorMap'
+import { storeToRefs } from 'pinia'
 
 import type { Norms } from '@/types/Source'
 
@@ -124,6 +132,9 @@ const luchtpijpStore = useLuchtpijpStore()
 const expairStore = useExpairStore()
 const globalStore = useGlobalStore()
 const curieusenairStore = useCurieusenairStore()
+
+const { locale } = storeToRefs(useDataStore())
+const { setLocale, infoCards } = useDataStore()
 
 const markerLocations = computed(() => {
   if (globalStore.source === 'luchtpijp') return luchtpijpStore.markerLocations
@@ -320,5 +331,16 @@ const textContent = {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.language-select {
+  z-index: -1;
+  position: absolute;
+  top: 1.5rem;
+  right: 9rem;
+}
+
+:deep(.selected) {
+  color: white;
 }
 </style>

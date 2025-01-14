@@ -155,7 +155,7 @@ onMounted(
 
 const norms = computed(() => [
   {
-    label: 'No norm',
+    label: 'Concentrations',
     value: null as Norms,
   },
   { label: 'Current European Standard', value: 'current' as Norms },

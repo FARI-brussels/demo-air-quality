@@ -20,22 +20,22 @@ export const thresholdsWorldHealth: ColorThreshold[] = [
 
 export const thresholdsEuropeanCurrent: ColorThreshold[] = [
   { threshold: 0, color: '#00FF00' },
-  { threshold: 25, color: '#FF0000' },
+  { threshold: 40, color: '#FF0000' },
 ] as const
 
 export const thresholdsEuropeanFuture: ColorThreshold[] = [
   { threshold: 0, color: '#00FF00' },
-  { threshold: 10, color: '#FF0000' },
+  { threshold: 20, color: '#FF0000' },
 ] as const
 
 export const thresholdsEuropeanCurrentLuchtpijp: ColorThreshold[] = [
   { threshold: 0, color: '#00FF00' },
-  { threshold: 40, color: '#FF0000' },
+  { threshold: 25, color: '#FF0000' },
 ] as const
 
 export const thresholdsEuropeanFutureLuchtpijp: ColorThreshold[] = [
   { threshold: 0, color: '#00FF00' },
-  { threshold: 20, color: '#FF0000' },
+  { threshold: 10, color: '#FF0000' },
 ] as const
 
 export const thresholdsP2: ColorThreshold[] = [

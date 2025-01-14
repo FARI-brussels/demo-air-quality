@@ -158,9 +158,9 @@ const norms = computed(() => [
     label: 'No norm',
     value: null as Norms,
   },
-  { label: 'European Current', value: 'current' as Norms },
-  { label: 'European Future', value: 'future' as Norms },
-  { label: 'World Health', value: 'global' as Norms },
+  { label: 'Current European Standard', value: 'current' as Norms },
+  { label: 'European Standard 2030', value: 'future' as Norms },
+  { label: 'World Health recommendations', value: 'global' as Norms },
 ])
 
 const norm = ref<Norms>(null)

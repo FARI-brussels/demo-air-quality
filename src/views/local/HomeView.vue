@@ -52,7 +52,7 @@
     <div class="backdrop" :class="{ 'backdrop-active': showInfoCard }"></div>
     <FFooter class="footer" />
     <video autoplay muted loop class="background-video">
-      <source src="../assets/airqualityIntro.mp4" type="video/mp4" />
+      <source src="../../assets/airqualityIntro.mp4" type="video/mp4" />
     </video>
   </div>
 </template>
@@ -86,16 +86,13 @@ onMounted(getData)
 </script>
 
 <style scoped lang="scss">
-// .view {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-around;
-//   height: 100%;
-//   width: 100%;
-//   position: relative;
-// }
-
-.view-production {
+.view {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  width: 100%;
+  position: relative;
 }
 
 .tooltip {

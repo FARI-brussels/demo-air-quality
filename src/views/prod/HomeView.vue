@@ -1,16 +1,15 @@
 <template>
-  <div class="view bg-color-blue" :class="layoutClass">
-    <FButtonIcon
-      name="tooltip"
-      class="tooltip"
-      color="blue-light"
-      small
-      @click="toggleInfoCard"
-    />
+  <div class="view bg-color-blue">
     <div class="heading">
       <div class="title">
-        <FTitle class="title"> air quality</FTitle>
-        <FTitle class="title"> in brussels</FTitle>
+        <FTitle> air quality in brussels</FTitle>
+        <FButtonIcon
+          name="tooltip"
+          class="tooltip"
+          color="blue-light"
+          small
+          @click="toggleInfoCard"
+        />
       </div>
       <FSubTitle class="subtitle"> Climate and Energy </FSubTitle>
     </div>
@@ -31,13 +30,13 @@
         {{ data.description[locale] }}
 
         <div class="researchers-container">
-          <span class="researchers">
+          <span v-if="data?.research_head" class="researchers">
             research head:
             <span class="research-head color-black">
               {{ data.research_head }}
             </span>
           </span>
-          <span class="researchers">
+          <span v-if="data?.research_lead" class="researchers">
             research lead:
             <span class="research-lead color-black">
               {{ data.research_lead }}
@@ -52,7 +51,7 @@
     <div class="backdrop" :class="{ 'backdrop-active': showInfoCard }"></div>
     <FFooter class="footer" />
     <video autoplay muted loop class="background-video">
-      <source src="../assets/airqualityIntro.mp4" type="video/mp4" />
+      <source src="../../assets/airqualityIntro.mp4" type="video/mp4" />
     </video>
   </div>
 </template>
@@ -67,12 +66,10 @@ import {
   FCard,
   FSlideTransition,
 } from 'fari-component-library'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useDataStore } from '@/stores/cms'
-import { inject } from 'vue'
-const mode = inject('mode', 'development')
 
 const showInfoCard = ref(false)
 const toggleInfoCard = () => (showInfoCard.value = !showInfoCard.value)
@@ -80,29 +77,14 @@ const toggleInfoCard = () => (showInfoCard.value = !showInfoCard.value)
 const { data, locale } = storeToRefs(useDataStore())
 const { getData, setLocale } = useDataStore()
 
-const layoutClass = computed(() => `view-${mode}`)
-
 onMounted(getData)
+
+console.log({ data })
 </script>
 
 <style scoped lang="scss">
-// .view {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-around;
-//   height: 100%;
-//   width: 100%;
-//   position: relative;
-// }
-
-.view-production {
-}
-
-.tooltip {
-  z-index: 2;
-  position: absolute;
-  top: 7rem;
-  right: 40rem;
+.background-video {
+  height: 100vh;
 }
 
 .heading {
@@ -117,7 +99,10 @@ onMounted(getData)
   .title {
     gap: 1rem;
     display: flex;
-    flex-direction: column;
+
+    .tooltip {
+      z-index: 2;
+    }
   }
 }
 
@@ -132,7 +117,6 @@ onMounted(getData)
 
 .footer {
   margin-top: auto;
-  margin-bottom: 1.8rem;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -140,8 +124,8 @@ onMounted(getData)
 
 .card {
   position: absolute;
-  top: 20%;
-  left: 20%;
+  top: 12%;
+  left: 16%;
   z-index: 3;
 }
 

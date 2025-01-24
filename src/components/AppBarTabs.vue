@@ -1,5 +1,5 @@
 <template>
-  <div role="tablist" aria-label="Data Source Tabs">
+  <div role="tablist" class="wrapper" aria-label="Data Source Tabs">
     <button
       v-for="{ value, label } in tabs"
       :key="value"
@@ -30,11 +30,16 @@ defineEmits<{
 </script>
 
 <style scoped lang="scss">
+.wrapper {
+  height: 100%;
+}
+
 .tab {
   cursor: pointer;
   padding: 10px 20px;
   background-color: transparent;
   height: 80px;
+  max-height: 100%;
   border: none;
   color: white;
   font-weight: bold;

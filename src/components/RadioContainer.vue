@@ -1,17 +1,23 @@
 <template>
   <div class="radio-container" @click="$emit('select', value)">
-    <p class="font-size-body ml-sm">{{ label }}</p>
+    <p class="font-size-body ml-sm" :class="{ small }">{{ label }}</p>
     <RadioButton
       :selected="selected"
       value="irceline"
       class="custom-radio mr-sm"
+      :small="small"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import RadioButton from './RadioButton.vue'
-defineProps<{ selected: boolean; value: string | number; label: string }>()
+defineProps<{
+  selected: boolean
+  value: string | number
+  label: string
+  small?: boolean
+}>()
 defineEmits<{
   (e: 'select', value: string | number): void
 }>()
@@ -22,5 +28,9 @@ defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.small {
+  font-size: 1rem;
 }
 </style>

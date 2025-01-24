@@ -75,7 +75,7 @@ watch(
 const loadGeoJsonMask = async () => {
   try {
     const response = await fetch(
-      '/demo-air-quality/src/assets/data/brussels_boundary.geojson ',
+      `${import.meta.env.BASE_URL}/src/assets/data/brussels_boundary.geojson`,
     )
     // const response = await fetch('/src/assets/data/brussels_boundary.geojson')
     const brusselsBoundary = await response.json()

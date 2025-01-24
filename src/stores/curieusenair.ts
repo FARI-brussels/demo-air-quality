@@ -4,9 +4,8 @@ import { useGlobalStore } from '@/stores/global'
 import type { SourceReference } from '@/types/Source'
 
 const DATA_PATHS = {
-  curieusenair: '/demo-air-quality/src/assets/data/no2_curieusenair.json',
-  irceline:
-    '/demo-air-quality/src/assets/data/no2_anmean_station_brussels2021.json',
+  curieusenair: `${import.meta.env.BASE_URL}/src/assets/data/no2_curieusenair.json`,
+  irceline: `${import.meta.env.BASE_URL}/src/assets/data/no2_anmean_station_brussels2021.json`,
 } as const
 
 type CurieusenairSource = Extract<SourceReference, 'curieusenair' | 'irceline'>

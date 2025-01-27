@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { FTitle } from 'fari-component-library'
 
 interface Props {
   title?: string

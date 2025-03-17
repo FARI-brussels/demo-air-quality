@@ -19,7 +19,16 @@
 
     <div class="sources bg-color-blue rounded p-sm">
       <div class="accordion bg-color-primary rounded-s">
-        <h2 class="color-white ml-sm font-size-subtitle">Data from</h2>
+        <div class="accordion-title">
+          <h2 class="color-white ml-sm font-size-subtitle">Data from</h2>
+          <FButtonIcon
+            name="tooltip"
+            class="tooltip"
+            small
+            color="blue-light"
+            @click="showPollutantInfo = !showPollutantInfo"
+          />
+        </div>
         <hr class="border-color-blue-light mr-sm ml-sm" />
 
         <div class="accordion-item">
@@ -29,17 +38,6 @@
             label="Irceline"
             @select="() => globalStore.toggleReference('irceline')"
           />
-          <div
-            :class="{
-              'expandable p-sm font-size-body': true,
-              expanded: globalStore.reference === 'irceline',
-            }"
-          >
-            <span>
-              This is data from the Irceline source. More details will be
-              displayed here based on your selection.
-            </span>
-          </div>
         </div>
 
         <div class="accordion-item">
@@ -49,18 +47,27 @@
             :label="globalStore.source"
             @select="globalStore.toggleReference(globalStore.source)"
           />
-          <div
-            :class="{
-              'expandable p-sm font-size-body': true,
-              expanded: globalStore.reference === globalStore.source,
-            }"
-          >
-            <span>
-              {{ infoCards?.[globalStore.source]?.[locale] }}
-            </span>
-          </div>
         </div>
       </div>
+
+      <h3 class="ml-sm">{{ legendInfo }}</h3>
+      <TransitionGroup
+        name="list"
+        tag="div"
+        class="color-chart bg-color-blue rounded p-sm"
+      >
+        <div
+          v-for="{ range, color } in colorChart"
+          :key="color"
+          class="color-item"
+        >
+          <div
+            :style="`background-color: ${color}`"
+            class="color-icon rounded"
+          ></div>
+          <span> {{ range }} </span>
+        </div>
+      </TransitionGroup>
     </div>
 
     <div class="norms">
@@ -76,23 +83,6 @@
       </div>
     </div>
 
-    <transition-group
-      name="list"
-      tag="div"
-      class="color-chart bg-color-blue rounded p-sm"
-    >
-      <div
-        v-for="{ range, color } in colorChart"
-        :key="color"
-        class="color-item"
-      >
-        <div
-          :style="`background-color: ${color}`"
-          class="color-icon rounded"
-        ></div>
-        <span> {{ range }} </span>
-      </div>
-    </transition-group>
     <transition name="fade">
       <BrusselsMap
         :markerLocations="markerLocations"
@@ -100,14 +90,56 @@
         :type="globalStore?.source === 'luchtpijp' ? 'PM2.5' : 'NO2'"
       />
     </transition>
+
+    <FSlideTransition :show="showPollutantInfo">
+      <PollutantInfoCard3
+        v-if="showPollutantInfo"
+        class="card"
+        @close="showPollutantInfo = false"
+        :items="[
+          {
+            title: 'PM2.5',
+            category: 'pollutant',
+            content: infoCards.pm2Info[locale],
+          },
+          {
+            title: 'NO2',
+            category: 'pollutant',
+            content: infoCards.no2Info[locale],
+          },
+          {
+            title: 'curieusenair',
+            category: 'source',
+            content: infoCards.curieusenair[locale],
+          },
+          {
+            title: 'Luchtpijp',
+            category: 'source',
+            content: infoCards.luchtpijp[locale],
+          },
+          {
+            title: 'Irceline',
+            category: 'source',
+            content: infoCards.ircelineInfo[locale],
+          },
+        ]"
+      />
+    </FSlideTransition>
+    <div class="backdrop" :class="{ 'backdrop-active': showPollutantInfo }" />
   </div>
 </template>
 
 <script setup lang="ts">
 import BrusselsMap from '@/components/BrusselsMapBackup.vue'
-import { FDemoAppBar, FLanguageSelector } from 'fari-component-library'
+import {
+  FDemoAppBar,
+  FLanguageSelector,
+  FButtonIcon,
+  FSlideTransition,
+} from 'fari-component-library'
 import AppBarTabs from '@/components/AppBarTabs.vue'
 import RadioContainer from '@/components/RadioContainer.vue'
+import PollutantInfoCard3 from '@/components/PollutantInfoCard3.vue'
 import { useLuchtpijpStore } from '@/stores/luchtpijp'
 import { useExpairStore } from '@/stores/expair'
 import { useGlobalStore } from '@/stores/global'
@@ -135,6 +167,15 @@ const curieusenairStore = useCurieusenairStore()
 
 const { locale } = storeToRefs(useDataStore())
 const { setLocale, infoCards } = useDataStore()
+
+const legendInfo = computed(() => {
+  if (globalStore.source === 'luchtpijp') return 'Real time PM2.5 concentration'
+  else if (globalStore.source === 'expair')
+    return 'Mean NO2 concentration in 2023'
+  else if (globalStore.source === 'curieusenair')
+    return 'Mean NO2 concentration in october 2021'
+  return null
+})
 
 const markerLocations = computed(() => {
   if (globalStore.source === 'luchtpijp') return luchtpijpStore.markerLocations
@@ -198,18 +239,7 @@ const colorChart = computed(() => {
   })
 })
 
-const textContent = {
-  expair: `The expair data have been collected during the full year 2023 by
-            Bral. There are compared here with the Irceline data collected in
-            2023.You can compare both data against different
-            norms/recommandatation. The current european one, the future one
-            that will likely be adopted in 2025 and the world health
-            organization one.The expair data have been collected during the full
-            year 2023 by Bral. There are compared here with the Irceline data
-            collected in 2023.`,
-  curieusenair: `some curiusenair text`,
-  luchtpijp: `some luchtpijp text`,
-}
+const showPollutantInfo = ref(false)
 </script>
 
 <style scoped lang="scss">
@@ -221,6 +251,43 @@ const textContent = {
   width: 100%;
   position: relative;
 }
+
+.card {
+  position: absolute;
+  top: 15%;
+  left: 25%;
+  z-index: 5000000;
+}
+
+.backdrop {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(0);
+  z-index: 0;
+  transition: all 100ms;
+
+  &-active {
+    visibility: visible;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    transition: all 300ms;
+    z-index: 4000000;
+  }
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 2rem;
+}
+
 .app-bar {
   position: absolute;
   top: 0;
@@ -234,7 +301,7 @@ const textContent = {
   right: 1%;
   display: flex;
   flex-direction: column;
-  width: 528px;
+  width: 400px;
 }
 .accordion-item {
   color: white;
@@ -259,8 +326,8 @@ const textContent = {
 .norms {
   position: absolute;
   z-index: 20000;
-  bottom: 10%;
-  left: 40%;
+  bottom: 8%;
+  left: 30%;
 }
 
 .segmented-control {
@@ -291,10 +358,7 @@ const textContent = {
 }
 
 .color-chart {
-  position: absolute;
   z-index: 20000;
-  bottom: 4%;
-  left: 4%;
 }
 
 .color-icon {
@@ -334,10 +398,11 @@ const textContent = {
 }
 
 .language-select {
-  z-index: -1;
+  z-index: 1;
   position: absolute;
   top: 1.5rem;
   right: 9rem;
+  width: fit-content;
 }
 
 :deep(.selected) {

@@ -18,9 +18,9 @@ export const useLuchtpijpStore = defineStore('luchtpijp', () => {
 
   async function fetchLuchtpijpData(path: LuchtpijpSource) {
     globalStore.loading = true
-    console.log({ path })
+
     const data = await DATA_PATHS[path]()
-    console.log({ data })
+
     if (data)
       markerLocations.value = data.map((item, index) => ({
         ...item,

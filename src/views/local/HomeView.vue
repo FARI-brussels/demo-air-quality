@@ -43,9 +43,24 @@
               {{ data.research_lead }}
             </span>
           </span>
+          <div class="flex">
+            <img
+              v-for="sdg in data.sdg_images"
+              :key="sdg"
+              :src="sdg"
+              class="sdg mr-md mt-sm"
+            />
+          </div>
         </div>
         <template #footer>
-          <div v-if="data.logo" v-html="data.logo"></div>
+          <div v-if="data?.logos">
+            <img
+              v-for="logo in data.logos"
+              :src="logo"
+              :key="logo"
+              class="card-logo"
+            />
+          </div>
         </template>
       </FCard>
     </FSlideTransition>
@@ -156,6 +171,16 @@ onMounted(getData)
 .research-head,
 .research-lead {
   text-transform: none;
+}
+
+.card-logo {
+  height: 3.5rem;
+  margin-right: 2rem;
+}
+
+.sdg {
+  height: 3.5rem;
+  width: 3.5rem;
 }
 
 .backdrop {

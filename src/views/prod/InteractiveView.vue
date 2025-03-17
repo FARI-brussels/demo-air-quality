@@ -1,14 +1,6 @@
 <template>
   <div class="view">
-    <AppBar color="primary" @exit="$router.push('/')" dense>
-      <template #navigation>
-        <FButtonIcon
-          name="chevron-left"
-          small
-          @click="$router.push('/')"
-        ></FButtonIcon>
-      </template>
-
+    <FDemoAppBar color="primary" @exit="$router.push('/')">
       <AppBarTabs
         :tabs="[
           { label: 'Luchtpijp', value: 'luchtpijp' },
@@ -19,68 +11,64 @@
         @select="globalStore.toggleSource"
       />
 
-      <template #actions>
-        <FDropdown
-          small
-          icon="settings"
-          @select="setLocale"
-          :items="[
-            { label: 'Francais', value: 'fr' },
-            { label: 'English', value: 'en' },
-            { label: 'Nederlands', value: 'nl' },
-          ]"
-        ></FDropdown>
-      </template>
-    </AppBar>
+      <FLanguageSelector
+        :locale="locale"
+        class="language-select"
+        @update:locale="setLocale"
+      />
+    </FDemoAppBar>
 
-    <div class="accordion bg-color-primary rounded-s">
-      <h3 class="color-white ml-sm font-size-body">Data from</h3>
-      <hr class="border-color-blue-light mr-sm ml-sm" />
+    <div class="sources bg-color-blue rounded p-sm">
+      <div class="accordion bg-color-primary rounded-s">
+        <div class="accordion-title">
+          <h2 class="color-white ml-sm font-size-subtitle">Data from</h2>
+          <FButtonIcon
+            name="tooltip"
+            class="tooltip"
+            small
+            color="blue-light"
+            @click="showPollutantInfo = !showPollutantInfo"
+          />
+        </div>
+        <hr class="border-color-blue-light mr-sm ml-sm" />
 
-      <div class="accordion-item">
-        <RadioContainer
-          value="irceline"
-          :selected="globalStore.reference === 'irceline'"
-          label="Irceline"
-          small
-          @select="() => globalStore.toggleReference('irceline')"
-        />
-        <div
-          :class="{
-            'expandable p-sm font-size-body': true,
-            expanded: globalStore.reference === 'irceline',
-          }"
-        >
-          <div class="expanded-container">
-            <span>
-              This is data from the Irceline source. More details will be
-              displayed here based on your selection.
-            </span>
-          </div>
+        <div class="accordion-item">
+          <RadioContainer
+            value="irceline"
+            :selected="globalStore.reference === 'irceline'"
+            label="Irceline"
+            @select="() => globalStore.toggleReference('irceline')"
+          />
+        </div>
+
+        <div class="accordion-item">
+          <RadioContainer
+            :value="globalStore.source"
+            :selected="globalStore.reference === globalStore.source"
+            :label="globalStore.source"
+            @select="globalStore.toggleReference(globalStore.source)"
+          />
         </div>
       </div>
 
-      <div class="accordion-item">
-        <RadioContainer
-          :value="globalStore.source"
-          :selected="globalStore.reference === globalStore.source"
-          :label="globalStore.source"
-          small
-          @select="globalStore.toggleReference(globalStore.source)"
-        />
+      <h3 class="ml-sm">{{ legendInfo }}</h3>
+      <TransitionGroup
+        name="list"
+        tag="div"
+        class="color-chart bg-color-blue rounded p-sm"
+      >
         <div
-          :class="{
-            'expandable p-sm font-size-body': true,
-            expanded: globalStore.reference === globalStore.source,
-          }"
+          v-for="{ range, color } in colorChart"
+          :key="color"
+          class="color-item"
         >
-          <div class="expanded-container">
-            <span>
-              {{ infoCards?.[globalStore.source]?.[locale] }}
-            </span>
-          </div>
+          <div
+            :style="`background-color: ${color}`"
+            class="color-icon rounded"
+          ></div>
+          <span> {{ range }} </span>
         </div>
-      </div>
+      </TransitionGroup>
     </div>
 
     <div class="norms">
@@ -96,23 +84,42 @@
       </div>
     </div>
 
-    <transition-group
-      name="list"
-      tag="div"
-      class="color-chart bg-color-blue rounded-s p-sm color-white"
-    >
-      <div
-        v-for="{ range, color } in colorChart"
-        :key="color"
-        class="color-item"
-      >
-        <div
-          :style="`background-color: ${color}`"
-          class="color-icon rounded"
-        ></div>
-        <span> {{ range }} </span>
-      </div>
-    </transition-group>
+    <FSlideTransition :show="showPollutantInfo">
+      <PollutantInfoCard3
+        v-if="showPollutantInfo"
+        class="card"
+        @close="showPollutantInfo = false"
+        :items="[
+          {
+            title: 'PM2.5',
+            category: 'pollutant',
+            content: infoCards.pm2Info[locale],
+          },
+          {
+            title: 'NO2',
+            category: 'pollutant',
+            content: infoCards.no2Info[locale],
+          },
+          {
+            title: 'curieusenair',
+            category: 'source',
+            content: infoCards.curieusenair[locale],
+          },
+          {
+            title: 'Luchtpijp',
+            category: 'source',
+            content: infoCards.luchtpijp[locale],
+          },
+          {
+            title: 'Irceline',
+            category: 'source',
+            content: infoCards.ircelineInfo[locale],
+          },
+        ]"
+      />
+    </FSlideTransition>
+    <div class="backdrop" :class="{ 'backdrop-active': showPollutantInfo }" />
+
     <transition name="fade">
       <BrusselsMap
         :markerLocations="markerLocations"
@@ -125,9 +132,13 @@
 
 <script setup lang="ts">
 import BrusselsMap from '@/components/BrusselsMapBackup.vue'
-import { FButtonIcon, FDropdown } from 'fari-component-library'
+import {
+  FButtonIcon,
+  FDemoAppBar,
+  FLanguageSelector,
+  FSlideTransition,
+} from 'fari-component-library'
 import AppBarTabs from '@/components/AppBarTabsDesktop.vue'
-import AppBar from '@/components/AppBar.vue'
 import RadioContainer from '@/components/RadioContainer.vue'
 import { useLuchtpijpStore } from '@/stores/luchtpijp'
 import { useExpairStore } from '@/stores/expair'
@@ -135,6 +146,7 @@ import { useGlobalStore } from '@/stores/global'
 import { useCurieusenairStore } from '@/stores/curieusenair'
 import { useDataStore } from '@/stores/cms'
 import { onMounted, computed, ref } from 'vue'
+import PollutantInfoCard3 from '@/components/PollutantInfoCard3.vue'
 
 import {
   thresholdsP2,
@@ -156,6 +168,15 @@ const curieusenairStore = useCurieusenairStore()
 
 const { locale } = storeToRefs(useDataStore())
 const { setLocale, infoCards } = useDataStore()
+
+const legendInfo = computed(() => {
+  if (globalStore.source === 'luchtpijp') return 'Real time PM2.5 concentration'
+  else if (globalStore.source === 'expair')
+    return 'Mean NO2 concentration in 2023'
+  else if (globalStore.source === 'curieusenair')
+    return 'Mean NO2 concentration in october 2021'
+  return null
+})
 
 const markerLocations = computed(() => {
   if (globalStore.source === 'luchtpijp') return luchtpijpStore.markerLocations
@@ -219,18 +240,7 @@ const colorChart = computed(() => {
   })
 })
 
-const textContent = {
-  expair: `The expair data have been collected during the full year 2023 by
-            Bral. There are compared here with the Irceline data collected in
-            2023.You can compare both data against different
-            norms/recommandatation. The current european one, the future one
-            that will likely be adopted in 2025 and the world health
-            organization one.The expair data have been collected during the full
-            year 2023 by Bral. There are compared here with the Irceline data
-            collected in 2023.`,
-  curieusenair: `some curiusenair text`,
-  luchtpijp: `some luchtpijp text`,
-}
+const showPollutantInfo = ref(false)
 </script>
 
 <style scoped lang="scss">
@@ -242,20 +252,57 @@ const textContent = {
   width: 100%;
   position: relative;
 }
+
+.card {
+  position: absolute;
+  top: 15%;
+  left: 25%;
+  z-index: 5000000;
+}
+
+.backdrop {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(0);
+  z-index: 0;
+  transition: all 100ms;
+
+  &-active {
+    visibility: visible;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    transition: all 300ms;
+    z-index: 4000000;
+  }
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 2rem;
+}
+
 .app-bar {
   position: absolute;
   top: 0;
   z-index: 2000000;
 }
 
-.accordion {
+.sources {
   position: absolute;
   z-index: 20000;
   top: 11%;
-  right: 2.5%;
+  right: 1%;
   display: flex;
   flex-direction: column;
-  width: 23rem;
+  width: 400px;
 }
 
 .accordion-item {
@@ -321,11 +368,7 @@ const textContent = {
 }
 
 .color-chart {
-  position: absolute;
   z-index: 20000;
-  bottom: 4%;
-  left: 4%;
-  backdrop-filter: blur(3px);
 }
 
 .color-icon {

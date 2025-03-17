@@ -42,9 +42,24 @@
               {{ data.research_lead }}
             </span>
           </span>
+          <div class="flex">
+            <img
+              v-for="sdg in data?.sdg_images"
+              :key="sdg"
+              :src="sdg"
+              class="sdg mr-md mt-sm"
+            />
+          </div>
         </div>
         <template #footer>
-          <div v-if="data.logo" v-html="data.logo"></div>
+          <div v-if="data?.logos">
+            <img
+              v-for="logo in data.logos"
+              :src="logo"
+              :key="logo"
+              class="card-logo"
+            />
+          </div>
         </template>
       </FCard>
     </FSlideTransition>

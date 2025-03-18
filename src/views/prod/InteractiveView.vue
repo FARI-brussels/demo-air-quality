@@ -408,7 +408,7 @@ const showPollutantInfo = ref(false)
 }
 
 .language-select {
-  z-index: -1;
+  z-index: 1;
   position: absolute;
   top: 1.5rem;
   right: 9rem;

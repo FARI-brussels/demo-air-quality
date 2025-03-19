@@ -412,6 +412,7 @@ const showPollutantInfo = ref(false)
   position: absolute;
   top: 1.5rem;
   right: 9rem;
+  width: fit-content;
 }
 
 :deep(.selected) {

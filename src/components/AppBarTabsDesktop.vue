@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 
 type Tab = {
   label: string
@@ -38,7 +38,7 @@ const emit = defineEmits<{
   (e: 'select', value: string | number): void
 }>()
 
-const selectedTab = ref<string | null>(null)
+const selectedTab = ref<string | null>(props?.selected || null)
 const tabRefs = new Map<string, HTMLElement>()
 const tabListRef = ref<HTMLElement | null>(null)
 
@@ -49,15 +49,21 @@ function selectTab(value: string) {
   emit('select', value)
 }
 
-watch(selectedTab, () => {
-  const tabElement = tabRefs.get(selectedTab.value || '')
-  if (tabElement) {
-    indicatorStyle.value = {
-      width: `${tabElement.offsetWidth}px`,
-      left: `${tabElement.offsetLeft}px`,
+watch(
+  selectedTab,
+  async () => {
+    await nextTick()
+    const tabElement = tabRefs.get(selectedTab.value || '')
+
+    if (tabElement) {
+      indicatorStyle.value = {
+        width: `${tabElement.offsetWidth}px`,
+        left: `${tabElement.offsetLeft}px`,
+      }
     }
-  }
-})
+  },
+  { immediate: true },
+)
 
 onMounted(() => {
   if (!selectedTab.value && props.tabs.length > 0) {

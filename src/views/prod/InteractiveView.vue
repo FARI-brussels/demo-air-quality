@@ -92,33 +92,33 @@
         :items="[
           {
             title: 'PM2.5',
-            category: 'pollutant',
+            category: 'Pollutant',
             content: infoCards.pm2Info[locale],
           },
           {
             title: 'NO2',
-            category: 'pollutant',
+            category: 'Pollutant',
             content: infoCards.no2Info[locale],
           },
           {
             title: 'CurieuzenAir',
-            category: 'source',
+            category: 'Project',
             content: infoCards.CurieuzenAir[locale],
           },
           {
-            title: 'luchtpijp',
-            category: 'source',
+            title: 'Luchtpijp',
+            category: 'Project',
             content: infoCards.luchtpijp[locale],
           },
           {
-            title: 'irceline',
-            category: 'source',
+            title: 'IRCEL-CELINE',
+            category: 'Project',
             content: infoCards.ircelineInfo[locale],
           },
           {
             title: 'ExpAir',
-            category: 'source',
-            content: infoCards.ExpAirInfo[locale],
+            category: 'Project',
+            content: infoCards.ExpAir[locale],
           },
         ]"
       />

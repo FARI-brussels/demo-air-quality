@@ -4,7 +4,7 @@ import type { SensorData } from '@/types/Sensor'
 import type { SourceReference } from '@/types/Source'
 import { useGlobalStore } from '@/stores/global'
 
-type LuchtpijpSource = Extract<SourceReference, 'luchtpijp' | 'irceline'>
+type LuchtpijpSource = Extract<SourceReference, 'luchtpijp' | 'IRCEL-CELINE'>
 
 const DATA_PATHS = {
   luchtpijp: fetchSensorCommunityData,

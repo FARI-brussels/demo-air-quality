@@ -5,10 +5,10 @@ import type { Source, SourceReference } from '@/types/Source'
 export const useGlobalStore = defineStore('global', () => {
   const loading = ref(false)
 
-  const source = ref<Source>('expair')
+  const source = ref<Source>('ExpAir')
   const toggleSource = (newSource: Source) => (source.value = newSource)
 
-  const reference = ref<SourceReference>('expair')
+  const reference = ref<SourceReference>('ExpAir')
   const toggleReference = (newReference: SourceReference) =>
     (reference.value = newReference)
 

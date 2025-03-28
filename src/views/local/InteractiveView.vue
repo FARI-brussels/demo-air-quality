@@ -4,8 +4,8 @@
       <AppBarTabs
         :tabs="[
           { label: 'Luchtpijp', value: 'luchtpijp' },
-          { label: 'Expair', value: 'expair' },
-          { label: 'Curieusenair', value: 'curieusenair' },
+          { label: 'ExpAir', value: 'ExpAir' },
+          { label: 'CurieuzenAir', value: 'CurieuzenAir' },
         ]"
         :selected="globalStore.source"
         @select="globalStore.toggleSource"
@@ -33,9 +33,9 @@
 
         <div class="accordion-item">
           <RadioContainer
-            value="irceline"
+            value="IRCEL-CELINE"
             :selected="globalStore.reference === 'irceline'"
-            label="Irceline"
+            label="IRCEL-CELINE"
             @select="() => globalStore.toggleReference('irceline')"
           />
         </div>
@@ -99,28 +99,33 @@
         :items="[
           {
             title: 'PM2.5',
-            category: 'pollutant',
+            category: 'Pollutant',
             content: infoCards.pm2Info[locale],
           },
           {
             title: 'NO2',
-            category: 'pollutant',
+            category: 'Pollutant',
             content: infoCards.no2Info[locale],
           },
           {
-            title: 'curieusenair',
-            category: 'source',
-            content: infoCards.curieusenair[locale],
+            title: 'CurieuzenAir',
+            category: 'Project',
+            content: infoCards.CurieuzenAir[locale],
           },
           {
             title: 'Luchtpijp',
-            category: 'source',
+            category: 'Project',
             content: infoCards.luchtpijp[locale],
           },
           {
-            title: 'Irceline',
-            category: 'source',
+            title: 'IRCEL-CELINE',
+            category: 'Project',
             content: infoCards.ircelineInfo[locale],
+          },
+          {
+            title: 'ExpAir',
+            category: 'Project',
+            content: infoCards.ExpAir[locale],
           },
         ]"
       />
@@ -141,9 +146,9 @@ import AppBarTabs from '@/components/AppBarTabs.vue'
 import RadioContainer from '@/components/RadioContainer.vue'
 import PollutantInfoCard3 from '@/components/PollutantInfoCard3.vue'
 import { useLuchtpijpStore } from '@/stores/luchtpijp'
-import { useExpairStore } from '@/stores/expair'
+import { useExpairStore } from '@/stores/ExpAir'
 import { useGlobalStore } from '@/stores/global'
-import { useCurieusenairStore } from '@/stores/curieusenair'
+import { useCurieusenairStore } from '@/stores/CurieuzenAir'
 import { useDataStore } from '@/stores/cms'
 import { onMounted, computed, ref } from 'vue'
 
@@ -161,27 +166,27 @@ import { storeToRefs } from 'pinia'
 import type { Norms } from '@/types/Source'
 
 const luchtpijpStore = useLuchtpijpStore()
-const expairStore = useExpairStore()
+const ExpAirStore = useExpairStore()
 const globalStore = useGlobalStore()
-const curieusenairStore = useCurieusenairStore()
+const CurieuzenAirStore = useCurieusenairStore()
 
 const { locale } = storeToRefs(useDataStore())
 const { setLocale, infoCards } = useDataStore()
 
 const legendInfo = computed(() => {
   if (globalStore.source === 'luchtpijp') return 'Real time PM2.5 concentration'
-  else if (globalStore.source === 'expair')
+  else if (globalStore.source === 'ExpAir')
     return 'Mean NO2 concentration in 2023'
-  else if (globalStore.source === 'curieusenair')
+  else if (globalStore.source === 'CurieuzenAir')
     return 'Mean NO2 concentration in october 2021'
   return null
 })
 
 const markerLocations = computed(() => {
   if (globalStore.source === 'luchtpijp') return luchtpijpStore.markerLocations
-  else if (globalStore.source === 'expair') return expairStore.markerLocations
-  else if (globalStore.source === 'curieusenair')
-    return curieusenairStore.markerLocations
+  else if (globalStore.source === 'ExpAir') return ExpAirStore.markerLocations
+  else if (globalStore.source === 'CurieuzenAir')
+    return CurieuzenAirStore.markerLocations
   return null
 })
 
@@ -189,8 +194,8 @@ onMounted(
   async () =>
     await Promise.all([
       (luchtpijpStore.fetchLuchtpijpData('luchtpijp'),
-      expairStore.fetchExpairData('expair'),
-      curieusenairStore.getCurieusenairData('curieusenair')),
+      ExpAirStore.fetchExpairData('ExpAir'),
+      CurieuzenAirStore.getCurieusenairData('CurieuzenAir')),
     ]),
 )
 

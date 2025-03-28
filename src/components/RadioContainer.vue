@@ -3,7 +3,7 @@
     <p class="font-size-body ml-sm" :class="{ small }">{{ label }}</p>
     <RadioButton
       :selected="selected"
-      value="irceline"
+      value="Ircel Celine"
       class="custom-radio mr-sm"
       :small="small"
     />

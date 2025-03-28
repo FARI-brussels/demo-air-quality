@@ -4,8 +4,8 @@
       <AppBarTabs
         :tabs="[
           { label: 'Luchtpijp', value: 'luchtpijp' },
-          { label: 'Expair', value: 'expair' },
-          { label: 'Curieusenair', value: 'curieusenair' },
+          { label: 'ExpAir', value: 'ExpAir' },
+          { label: 'CurieuzenAir', value: 'CurieuzenAir' },
         ]"
         :selected="globalStore.source"
         @select="globalStore.toggleSource"
@@ -24,19 +24,19 @@
 
         <div class="accordion-item">
           <RadioContainer
-            value="irceline"
-            :selected="globalStore.reference === 'irceline'"
-            label="Irceline"
-            @select="() => globalStore.toggleReference('irceline')"
+            value="IRCEL-CELINE"
+            :selected="globalStore.reference === 'IRCEL-CELINE'"
+            label="IRCEL-CELINE"
+            @select="() => globalStore.toggleReference('IRCEL-CELINE')"
           />
           <div
             :class="{
               'expandable p-sm font-size-body': true,
-              expanded: globalStore.reference === 'irceline',
+              expanded: globalStore.reference === 'IRCEL-CELINE',
             }"
           >
             <span>
-              This is data from the Irceline source. More details will be
+              This is data from the IRCEL-CELINE source. More details will be
               displayed here based on your selection.
             </span>
           </div>
@@ -109,9 +109,9 @@ import { FDemoAppBar, FLanguageSelector } from 'fari-component-library'
 import AppBarTabs from '@/components/AppBarTabs.vue'
 import RadioContainer from '@/components/RadioContainer.vue'
 import { useLuchtpijpStore } from '@/stores/luchtpijp'
-import { useExpairStore } from '@/stores/expair'
+import { useExpairStore } from '@/stores/ExpAir'
 import { useGlobalStore } from '@/stores/global'
-import { useCurieusenairStore } from '@/stores/curieusenair'
+import { useCurieusenairStore } from '@/stores/CurieuzenAir'
 import { useDataStore } from '@/stores/cms'
 import { onMounted, computed, ref } from 'vue'
 
@@ -129,18 +129,18 @@ import { storeToRefs } from 'pinia'
 import type { Norms } from '@/types/Source'
 
 const luchtpijpStore = useLuchtpijpStore()
-const expairStore = useExpairStore()
+const ExpAirStore = useExpairStore()
 const globalStore = useGlobalStore()
-const curieusenairStore = useCurieusenairStore()
+const CurieuzenAirStore = useCurieusenairStore()
 
 const { locale } = storeToRefs(useDataStore())
 const { setLocale, infoCards } = useDataStore()
 
 const markerLocations = computed(() => {
   if (globalStore.source === 'luchtpijp') return luchtpijpStore.markerLocations
-  else if (globalStore.source === 'expair') return expairStore.markerLocations
-  else if (globalStore.source === 'curieusenair')
-    return curieusenairStore.markerLocations
+  else if (globalStore.source === 'ExpAir') return ExpAirStore.markerLocations
+  else if (globalStore.source === 'CurieuzenAir')
+    return CurieuzenAirStore.markerLocations
   return null
 })
 
@@ -148,8 +148,8 @@ onMounted(
   async () =>
     await Promise.all([
       (luchtpijpStore.fetchLuchtpijpData('luchtpijp'),
-      expairStore.fetchExpairData('expair'),
-      curieusenairStore.getCurieusenairData('curieusenair')),
+      ExpAirStore.fetchExpairData('ExpAir'),
+      CurieuzenAirStore.getCurieusenairData('CurieuzenAir')),
     ]),
 )
 
@@ -199,15 +199,15 @@ const colorChart = computed(() => {
 })
 
 const textContent = {
-  expair: `The expair data have been collected during the full year 2023 by
+  ExpAir: `The ExpAir data have been collected during the full year 2023 by
             Bral. There are compared here with the Irceline data collected in
             2023.You can compare both data against different
             norms/recommandatation. The current european one, the future one
             that will likely be adopted in 2025 and the world health
-            organization one.The expair data have been collected during the full
+            organization one.The ExpAir data have been collected during the full
             year 2023 by Bral. There are compared here with the Irceline data
             collected in 2023.`,
-  curieusenair: `some curiusenair text`,
+  CurieuzenAir: `some curiusenair text`,
   luchtpijp: `some luchtpijp text`,
 }
 </script>

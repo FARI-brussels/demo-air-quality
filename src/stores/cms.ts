@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import { fetchDirectus } from 'fari-directus-parser'
 import {
   luchtpijp,
-  curieusenair,
-  expair,
+  CurieuzenAir,
+  ExpAir,
   pm2Info,
   no2Info,
   ircelineInfo,
@@ -32,8 +32,8 @@ export const useDataStore = defineStore('data', () => {
     error,
     getData,
     infoCards: {
-      expair,
-      curieusenair,
+      ExpAir,
+      CurieuzenAir,
       luchtpijp,
       pm2Info,
       no2Info,

@@ -4,11 +4,11 @@ import { useGlobalStore } from '@/stores/global'
 import type { SourceReference } from '@/types/Source'
 
 const DATA_PATHS = {
-  curieusenair: '/data/no2_curieusenair.json',
+  CurieuzenAir: '/data/no2_curieusenair.json',
   irceline: '/data/no2_anmean_station_brussels2021.json',
 } as const
 
-type CurieusenairSource = Extract<SourceReference, 'curieusenair' | 'irceline'>
+type CurieusenairSource = Extract<SourceReference, 'CurieuzenAir' | 'irceline'>
 
 async function loadGeojsonData(source: CurieusenairSource) {
   try {
@@ -37,7 +37,7 @@ function createMarkersFromGeojson(data) {
   })
 }
 
-export const useCurieusenairStore = defineStore('curieusenair', () => {
+export const useCurieusenairStore = defineStore('CurieuzenAir', () => {
   const globalStore = useGlobalStore()
 
   const dataType = ref<string | null>('P2')
@@ -52,7 +52,7 @@ export const useCurieusenairStore = defineStore('curieusenair', () => {
 
   watchEffect(async () => {
     globalStore.loading = true
-    if (globalStore.source !== 'curieusenair') return
+    if (globalStore.source !== 'CurieuzenAir') return
     await getCurieusenairData(globalStore.reference as CurieusenairSource)
     globalStore.loading = false
   })

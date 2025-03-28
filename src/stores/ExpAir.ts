@@ -4,11 +4,11 @@ import { useGlobalStore } from '@/stores/global'
 import type { SourceReference } from '@/types/Source'
 
 const DATA_PATHS = {
-  expair: '/data/no2_expair.json',
+  ExpAir: '/data/no2_expair.json',
   irceline: '/data/no2_anmean_station_brussels2023.json',
 } as const
 
-type ExpairSource = Extract<SourceReference, 'expair' | 'irceline'>
+type ExpairSource = Extract<SourceReference, 'ExpAir' | 'irceline'>
 
 async function loadGeojsonData(source: ExpairSource) {
   try {
@@ -37,7 +37,7 @@ function createMarkersFromGeojson(data) {
   })
 }
 
-export const useExpairStore = defineStore('expair', () => {
+export const useExpairStore = defineStore('ExpAir', () => {
   const globalStore = useGlobalStore()
   const dataType = ref<string | null>('P2')
   const markerLocations = ref(null)
@@ -51,7 +51,7 @@ export const useExpairStore = defineStore('expair', () => {
 
   watchEffect(async () => {
     globalStore.loading = true
-    if (globalStore.source !== 'expair') return
+    if (globalStore.source !== 'ExpAir') return
     await fetchExpairData(globalStore.reference as ExpairSource)
     globalStore.loading = false
   })

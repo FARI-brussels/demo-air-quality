@@ -36,7 +36,7 @@
           <RadioContainer
             value="irceline"
             :selected="globalStore.reference === 'irceline'"
-            label="irceline"
+            label="IRCEL-CELINE"
             @select="() => globalStore.toggleReference('irceline')"
           />
         </div>
@@ -112,7 +112,7 @@
           },
           {
             title: 'IRCEL-CELINE',
-            category: 'Project',
+            category: 'source',
             content: infoCards.ircelineInfo[locale],
           },
           {

@@ -119,7 +119,7 @@
           },
           {
             title: 'IRCEL-CELINE',
-            category: 'Project',
+            category: 'source',
             content: infoCards.ircelineInfo[locale],
           },
           {

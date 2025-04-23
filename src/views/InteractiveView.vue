@@ -24,10 +24,10 @@
 
         <div class="accordion-item">
           <RadioContainer
-            value="IRCEL-CELINE"
-            :selected="globalStore.reference === 'IRCEL-CELINE'"
+            value="irceline"
+            :selected="globalStore.reference === 'irceline'"
             label="IRCEL-CELINE"
-            @select="() => globalStore.toggleReference('IRCEL-CELINE')"
+            @select="() => globalStore.toggleReference('irceline')"
           />
           <div
             :class="{

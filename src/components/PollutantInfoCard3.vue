@@ -84,7 +84,7 @@ const selectedItem = computed(() =>
   display: flex;
   gap: 1rem;
   align-items: stretch;
-  height: 40rem;
+  height: 45rem;
   width: 60rem;
 }
 

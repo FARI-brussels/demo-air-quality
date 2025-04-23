@@ -24,7 +24,7 @@ function initializeMap() {
   if (map.value) return
 
   map.value = L.map(mapContainer.value as HTMLDivElement).setView(
-    [50.85, 4.38],
+    [50.84, 4.43],
     12,
   )
 

@@ -12,7 +12,9 @@
         <FTitle class="title"> air quality</FTitle>
         <FTitle class="title"> in brussels</FTitle>
       </div>
-      <FSubTitle class="subtitle"> Climate and Energy </FSubTitle>
+      <FSubTitle class="subtitle">
+        Citizen science: When citizens make the difference?
+      </FSubTitle>
     </div>
     <FButton
       label="Start demo"

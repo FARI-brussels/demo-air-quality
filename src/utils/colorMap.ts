@@ -53,16 +53,18 @@ export const thresholdsP2: ColorThreshold[] = [
 
 export function getColor(value: number, thresholds: ColorThreshold[]): string {
   const sortedThresholds = thresholds
+    .slice()
     .sort((a, b) => a.threshold - b.threshold)
-    .reverse()
 
-  const col = sortedThresholds.find(t => value > t.threshold)
+  if (value < sortedThresholds[0].threshold) {
+    return sortedThresholds[0].color
+  }
 
-  if (col) return col.color
-
-  for (const threshold of sortedThresholds) {
-    if (value > threshold.threshold) {
-      return threshold.color
+  for (let i = 0; i < sortedThresholds.length - 1; i++) {
+    const current = sortedThresholds[i]
+    const next = sortedThresholds[i + 1]
+    if (value >= current.threshold && value < next.threshold) {
+      return current.color
     }
   }
 
